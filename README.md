@@ -4,15 +4,12 @@ jQuery Resize (jresize) is a jQuery plugin to resize image. Then it is
 possible to use the coordinates data to be used for any purpose.
 
 
-
 * FEATURES *
-
 - Resize image
-
 
 * INSTRUCTIONS *
 
-The 'jresuze' method implement the whole business which can take an optional 
+The 'jresize' method implement the whole business which can take an optional 
 setting object argument:
 
   $('img').jresize();
