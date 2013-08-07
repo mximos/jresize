@@ -53,6 +53,7 @@
       if (jresize_loaded && destroy) {
         // Unload jresize if asked
         $image.parent().parent().find('.jresize_zoom_slider').remove();
+        $image.parent().parent().find(".jresize_minus, .jresize_plus").remove();
         $image.parent().append($image.data('original')); // restore original image
         $image.parent().unwrap(); // remove container
         $image.unwrap(); // remove viewport
@@ -110,7 +111,7 @@
         // Create the zoom widget which permit to resize the image
         if (!jresize_loaded) {
           var $zoom_widget = $('<div class="jresize_zoom_slider"><div class="ui-slider-handle"></div></div>')
-          .width($viewport.width())
+          .width($viewport.width() - 40)
           .slider({
             value: $image.width(),
             min: settings.zoom_min,
@@ -127,10 +128,35 @@
               $image.width(ui.value);
               $viewport.observator.notify('jresize_image_height', height);
               $viewport.observator.notify('jresize_image_width', ui.value);
+            },
+            change: function( event, ui ) {
+              var height = Math.round($zoom_widget.on_start_height_value * ui.value / $zoom_widget.on_start_width_value);
+              $image.height(height);
+              $image.width(ui.value);
+              $viewport.observator.notify('jresize_image_height', height);
+              $viewport.observator.notify('jresize_image_width', ui.value);
             }
           });
+
+          $minus = $("<span class=jresize_minus></span>").bind("click",function(){
+            var sliderCurrentValue = $zoom_widget.slider( "option", "value" );
+            $.extend($zoom_widget,{
+                on_start_width_value: sliderCurrentValue,
+                on_start_height_value: $image.height()
+              })
+            $zoom_widget.slider( "value", sliderCurrentValue - 30 );
+          });
+          $container.append($minus); 
           $container.append($zoom_widget);
-        
+          $plus = $("<span class=jresize_plus></span>").bind("click",function(){
+            var sliderCurrentValue = $zoom_widget.slider( "option", "value" );
+            $.extend($zoom_widget,{
+                on_start_width_value: sliderCurrentValue,
+                on_start_height_value: $image.height()
+              })
+            $zoom_widget.slider( "value", sliderCurrentValue + 30 );
+          });
+          $container.append($plus);
           // Make the viewport resizeable
           if (settings.viewport_resize) {
             $viewport.resizable({
@@ -238,5 +264,6 @@
         $('<img>').attr('src', src).load(image_load_handler);
       }
     });
+
   };
 })( jQuery );
